@@ -1,4 +1,6 @@
-import React from "react"; 
+import React, { createContext, useReducer, useContext } from 'react';
+import { FinancialDataProvider } from './contexts/FinancialDataContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 // import { StatusBar } from 'expo-status-bar'; // Remove if not used
 
 import { Foundation } from '@expo/vector-icons';
@@ -13,8 +15,11 @@ import Home from './screens/Home';
 
 const Tab = createBottomTabNavigator();
 
+export const useFinancialData = () => useContext(FinancialDataContext);
+
 export default function App() {
   return (
+    <FinancialDataProvider>
     <NavigationContainer>
     <Tab.Navigator
       initialRouteName="Home"
@@ -49,5 +54,6 @@ export default function App() {
     </Tab.Navigator>
 
     </NavigationContainer>
+    </FinancialDataProvider>
   );
 }
