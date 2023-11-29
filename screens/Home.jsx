@@ -4,6 +4,7 @@ import { SelectList } from 'react-native-dropdown-select-list';
 import { PieChart } from 'react-native-chart-kit';
 import { useFinancialData } from '../contexts/FinancialDataContext';
 import styles from '../styles/styles';
+
 import RecordList from '../components/RecordList';
 
    const monthOptions = [
@@ -26,6 +27,21 @@ const Home = () => {
     const { state, loadTestData } = useFinancialData();
     const [selectedMonth, setSelectedMonth] = useState('all'); 
 
+    const filterRecordsByMonth = (records, month) => {
+        if (month === 'all') {
+            return records;
+        }
+        const currentYear = new Date().getFullYear();
+        const monthIndex = parseInt(month, 10); // No need to subtract 1 here
+    
+        return records.filter(record => {
+            const recordDate = new Date(record.date);
+            const recordMonth = recordDate.getMonth() + 1; // Adding 1 since getMonth() returns 0-11
+            const recordYear = recordDate.getFullYear();
+            return recordMonth === monthIndex && recordYear === currentYear;
+        });
+    };
+    
     // Combine and sort expenses and incomes
     const combinedRecords = [...state.expenses, ...state.incomes]
         .sort((a, b) => new Date(b.date) - new Date(a.date)); // Sorting by date in descending order
@@ -70,9 +86,9 @@ const Home = () => {
             );
         }
     };
-    const expenseChartData = processChartData(state.expenses, expenseColors);
-    const incomeChartData = processChartData(state.incomes, incomeColors);
 
+    const expenseChartData = processChartData(filterRecordsByMonth(state.expenses, selectedMonth), expenseColors);
+    const incomeChartData = processChartData(filterRecordsByMonth(state.incomes, selectedMonth), incomeColors);
     const filteredRecords = selectedMonth && selectedMonth !== 'all'
     ? combinedRecords.filter(record => {
         const recordMonth = new Date(record.date).getMonth() + 1;
@@ -83,8 +99,12 @@ const Home = () => {
     return (
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
             <Button title="Load Test Data" onPress={loadTestData} />
+            <SelectList
+                data={monthOptions}
+                setSelected={setSelectedMonth}
+                placeholder="Select a Month"
+                boxStyles={styles.selectBox}/>
             <Text style={styles.heading}>Expense Overview</Text>
-            
             <PieChart
                 data={expenseChartData}
                 width={300}
@@ -105,11 +125,7 @@ const Home = () => {
                 paddingLeft="15"
             />           
             <Text style={styles.heading}>Records</Text>
-            <SelectList
-                data={monthOptions}
-                setSelected={setSelectedMonth}
-                placeholder="Select a Month"
-                boxStyles={styles.selectBox}/>
+
             <RecordList records={filteredRecords} />
         </ScrollView>
     );

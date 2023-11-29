@@ -30,6 +30,7 @@ export default StyleSheet.create({
         backgroundColor: '#007bff',
         padding: 10,
         borderRadius: 5,
+        marginBottom: 20,
     },
     buttonText: {
         color: '#ffffff',
@@ -42,6 +43,7 @@ export default StyleSheet.create({
         color: 'green',
     },
     selectBox: {
+        marginTop: 10,
         marginBottom: 15,
     }
 });

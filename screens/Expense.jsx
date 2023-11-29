@@ -1,25 +1,40 @@
 import React, { useState } from 'react';
 import { ScrollView, Text, TextInput, Button } from 'react-native';
-import DateTimePicker from 'react-datetime-picker'
-import { Picker } from '@react-native-picker/picker';
+import { SelectList } from 'react-native-dropdown-select-list';
 import { useFinancialData } from '../contexts/FinancialDataContext';
 import styles from '../styles/styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RecordList from '../components/RecordList';
 
-// Define CATEGORY_OPTIONS outside of the component
-const CATEGORY_OPTIONS = ['Dining', 'Fashion', 'Entertainment', 'Groceries', 'Transportation', 'Utilities', 'Others'];
+const category_options = ['Dining', 'Fashion', 'Entertainment', 'Groceries', 'Transportation', 'Utilities', 'Others'];
 
 const Expense = () => {
     const { dispatch, state } = useFinancialData();
-
     const [amount, setAmount] = useState('');
-    const [category, setCategory] = useState(CATEGORY_OPTIONS[0]); // Default to the first category (Dining)
+    const [category, setCategory] = useState(category_options[0]);
     const [description, setDescription] = useState('');
-    const [date, setDate] = useState(() => new Date().toISOString().split('T')[0]); // Current date in YYYY-MM-DD format
+    const today = new Date().toISOString().split('T')[0];
+    const [date, setDate] = useState(today);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    const validateAndSetDate = (inputDate) => {
+        if (!inputDate) return;
+        const regex = /^\d{4}-\d{1,2}-\d{1,2}$/; // Regex to match YYYY-M-D or YYYY-MM-DD
+    
+        if (regex.test(inputDate)) {
+            const [year, month, day] = inputDate.split('-').map(part => part.padStart(2, '0'));
+            setDate(`${year}-${month}-${day}`);
+        } else {
+            // Handle invalid date format
+            alert('Invalid date format. Please use YYYY-MM-DD format.');
+            setDate(today);
+            return;
+        } 
+    };
 
+    const handleDateBlur = () => {
+        validateAndSetDate(date);
+    };
 
     const submitExpense = async () => {
         if (!date || !amount || !category || !description) {
@@ -59,7 +74,7 @@ const Expense = () => {
         }
     
         // Reset the form
-        setDate(new Date().toISOString().split('T')[0]);
+        setDate(today);
         setAmount('');
         setCategory(CATEGORY_OPTIONS[0]);
         setDescription('');
@@ -68,23 +83,14 @@ const Expense = () => {
     return (
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
             <Text style={styles.heading}>Add Expense</Text>
-            <TextInput style={styles.textInput} placeholder="Date (YYYY-MM-DD)" value={date} onChangeText={setDate} />
+            <TextInput style={styles.textInput} placeholder="Date (YYYY-MM-DD)" value={date} onChangeText={setDate} onBlur={handleDateBlur} />
             <TextInput style={styles.textInput} placeholder="Amount" keyboardType="numeric" value={amount} onChangeText={setAmount} />
             <Text style={styles.label}>Category</Text>
-            <Picker
-                selectedValue={category}
-                onValueChange={(itemValue, itemIndex) => setCategory(itemValue)}
-                style={{ height: 50, width: 200, backgroundColor: '#ccc', fontColor: '#000'}}
-                itemStyle={{ color: 'black' }}
-            >
-                <Picker.Item label="Dining" value="Dining" />
-                <Picker.Item label="Fashion" value="Fashion" />
-                <Picker.Item label="Entertainment" value="Entertainment" />
-                <Picker.Item label="Groceries" value="Groceries" />
-                <Picker.Item label="Transportation" value="Transportation" />
-                <Picker.Item label="Utilities" value="Utilities" />
-                <Picker.Item label="Others" value="Others" />
-            </Picker>
+            <SelectList
+                data={category_options.map((item) => ({ key: item, value: item }))}
+                setSelected={setCategory}
+                placeholder="Select a Category"
+                boxStyles={styles.selectBox}/>
 
             <TextInput style={styles.textInput} placeholder="Description" value={description} onChangeText={setDescription} />
             <Button title="Add" onPress={submitExpense} disabled={isSubmitting} />
