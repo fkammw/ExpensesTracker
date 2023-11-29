@@ -1,48 +1,30 @@
-import React from 'react';
-import { Text, Button, View, ScrollView} from 'react-native';
+import React, {useState} from 'react';
+import { Text, Button, ScrollView} from 'react-native';
+import { SelectList } from 'react-native-dropdown-select-list';
 import { PieChart } from 'react-native-chart-kit';
 import { useFinancialData } from '../contexts/FinancialDataContext';
 import styles from '../styles/styles';
 import RecordList from '../components/RecordList';
 
+   const monthOptions = [
+        {key: 'all', value: 'All Months'},
+        {key: '1', value: 'January'},
+        {key: '2', value: 'February'},
+        {key: '3', value: 'March'},
+        {key: '4', value: 'April'},
+        {key: '5', value: 'May'},
+        {key: '6', value: 'June'},
+        {key: '7', value: 'July'},
+        {key: '8', value: 'August'},
+        {key: '9', value: 'September'},
+        {key: '10', value: 'October'},
+        {key: '11', value: 'November'},
+        {key: '12', value: 'December'},
+    ];
 
 const Home = () => {
-    const { state, loadTestData, resetData } = useFinancialData();
-
-    // Helper function to get a label for the month
-    const getMonthYear = (dateString) => {
-        // Parse the date string and construct a UTC date
-        const [year, month, day] = dateString.split('-').map(Number);
-        const date = new Date(Date.UTC(year, month - 1, day));
-      
-        // Format the date as "Month Year" in UTC
-        return date.toLocaleDateString('default', { year: 'numeric', month: 'long', timeZone: 'UTC' });
-      };
-    
-    // Function to group records by month
-    const groupByMonth = (records) => {
-        return records.reduce((groups, record) => {
-            const month = getMonthYear(record.date);
-            if (!groups[month]) {
-                groups[month] = [];
-            }
-            groups[month].push(record);
-            return groups;
-        }, {});
-    };
-
-        // Group combined records by month
-        const recordsByMonth = groupByMonth([...state.expenses, ...state.incomes]);
-
-        // Function to render records grouped by month
-        const renderRecordsByMonth = () => {
-            return Object.entries(recordsByMonth).sort((a, b) => new Date(b[0]) - new Date(a[0])).map(([month, records]) => (
-                <View key={month} style={styles.monthSection}>
-                    <Text style={styles.monthLabel}>{month}</Text>
-                    <RecordList records={records.sort((a, b) => new Date(b.date) - new Date(a.date))} />
-                </View>
-            ));
-        };
+    const { state, loadTestData } = useFinancialData();
+    const [selectedMonth, setSelectedMonth] = useState('all'); 
 
     // Combine and sort expenses and incomes
     const combinedRecords = [...state.expenses, ...state.incomes]
@@ -91,14 +73,44 @@ const Home = () => {
     const expenseChartData = processChartData(state.expenses, expenseColors);
     const incomeChartData = processChartData(state.incomes, incomeColors);
 
+    const filteredRecords = selectedMonth && selectedMonth !== 'all'
+    ? combinedRecords.filter(record => {
+        const recordMonth = new Date(record.date).getMonth() + 1;
+        return recordMonth === parseInt(selectedMonth, 10);
+      })
+    : combinedRecords;
+
     return (
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
             <Button title="Load Test Data" onPress={loadTestData} />
-            <Button title="Reset Data" onPress={resetData} />
-            {renderChartOrMessage(state.expenses, expenseChartData, "Expense Overview")}
-            {renderChartOrMessage(state.incomes, incomeChartData, "Income Overview")}
+            <Text style={styles.heading}>Expense Overview</Text>
+            
+            <PieChart
+                data={expenseChartData}
+                width={300}
+                height={200}
+                chartConfig={chartConfig}
+                accessor="amount"
+                backgroundColor="transparent"
+                paddingLeft="15"
+            />
+            <Text style={styles.heading}>Income Overview</Text>
+            <PieChart
+                data={incomeChartData}
+                width={300}
+                height={200}
+                chartConfig={chartConfig}
+                accessor="amount"
+                backgroundColor="transparent"
+                paddingLeft="15"
+            />           
             <Text style={styles.heading}>Records</Text>
-            {renderRecordsByMonth()}
+            <SelectList
+                data={monthOptions}
+                setSelected={setSelectedMonth}
+                placeholder="Select a Month"
+                boxStyles={styles.selectBox}/>
+            <RecordList records={filteredRecords} />
         </ScrollView>
     );
 };
