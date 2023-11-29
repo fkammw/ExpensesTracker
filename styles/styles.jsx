@@ -35,4 +35,13 @@ export default StyleSheet.create({
         color: '#ffffff',
         textAlign: 'center',
     },
+    overBudget: {
+        color: 'red',
+    },
+    underBudget: {
+        color: 'green',
+    },
+    selectBox: {
+        marginBottom: 15,
+    }
 });

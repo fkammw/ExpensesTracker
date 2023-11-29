@@ -1,13 +1,30 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Text, Button, ScrollView} from 'react-native';
+import { SelectList } from 'react-native-dropdown-select-list';
 import { PieChart } from 'react-native-chart-kit';
 import { useFinancialData } from '../contexts/FinancialDataContext';
 import styles from '../styles/styles';
 import RecordList from '../components/RecordList';
 
+   const monthOptions = [
+        {key: 'all', value: 'All Months'},
+        {key: '1', value: 'January'},
+        {key: '2', value: 'February'},
+        {key: '3', value: 'March'},
+        {key: '4', value: 'April'},
+        {key: '5', value: 'May'},
+        {key: '6', value: 'June'},
+        {key: '7', value: 'July'},
+        {key: '8', value: 'August'},
+        {key: '9', value: 'September'},
+        {key: '10', value: 'October'},
+        {key: '11', value: 'November'},
+        {key: '12', value: 'December'},
+    ];
 
 const Home = () => {
     const { state, loadTestData } = useFinancialData();
+    const [selectedMonth, setSelectedMonth] = useState('all'); 
 
     // Combine and sort expenses and incomes
     const combinedRecords = [...state.expenses, ...state.incomes]
@@ -32,10 +49,18 @@ const Home = () => {
     const expenseChartData = processChartData(state.expenses, expenseColors);
     const incomeChartData = processChartData(state.incomes, incomeColors);
 
+    const filteredRecords = selectedMonth && selectedMonth !== 'all'
+    ? combinedRecords.filter(record => {
+        const recordMonth = new Date(record.date).getMonth() + 1;
+        return recordMonth === parseInt(selectedMonth, 10);
+      })
+    : combinedRecords;
+
     return (
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
             <Button title="Load Test Data" onPress={loadTestData} />
             <Text style={styles.heading}>Expense Overview</Text>
+            
             <PieChart
                 data={expenseChartData}
                 width={300}
@@ -54,9 +79,14 @@ const Home = () => {
                 accessor="amount"
                 backgroundColor="transparent"
                 paddingLeft="15"
-            />
+            />           
             <Text style={styles.heading}>Records</Text>
-            <RecordList records={combinedRecords} />
+            <SelectList
+                data={monthOptions}
+                setSelected={setSelectedMonth}
+                placeholder="Select a Month"
+                boxStyles={styles.selectBox}/>
+            <RecordList records={filteredRecords} />
         </ScrollView>
     );
 };

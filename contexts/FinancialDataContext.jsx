@@ -17,6 +17,7 @@ const testData = {
         { date: '2023-01-12', category: 'Transportation', description: 'Costco Gas', amount: 56.00 },
         { date: '2023-01-15', category: 'Utilities', description: 'Telus Intenet', amount: 80.00 },
         { date: '2023-01-17', category: 'Others', description: 'lost', amount: 10.00 },
+        { date: '2023-10-20', category: 'Dining', description: 'McDonalds', amount: 10.00 },
     ],
     incomes: [
         { date: '2023-01-05', category: 'Salary', description: 'Salary from Winners', amount: 2305.00 },

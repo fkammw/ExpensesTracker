@@ -42,6 +42,8 @@ const Budget = () => {
         }
     };
 
+    const isOverBudget = totalSpent > monthlyBudget;
+
     return (
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
             <Text style={styles.heading}>Set Monthly Budget for {month}</Text>
@@ -56,7 +58,7 @@ const Budget = () => {
             <Text style={styles.heading}>Monthly Budget Overview</Text>
             <Text>Total Budget: ${monthlyBudget}</Text>
             <Text>Total Spent: ${totalSpent}</Text>
-            <Text>Remaining: ${monthlyBudget - totalSpent}</Text>
+            <Text style = {[styles.container, isOverBudget ? styles.overBudget : styles.underBudget]}>Remaining: ${monthlyBudget - totalSpent}</Text>
         </ScrollView>
     );
 };
