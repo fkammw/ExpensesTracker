@@ -1,6 +1,6 @@
 // Budget.jsx
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button } from 'react-native';
+import { Text, ScrollView, TextInput, Button} from 'react-native';
 import { useFinancialData } from '../contexts/FinancialDataContext';
 import styles from '../styles/styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -43,7 +43,7 @@ const Budget = () => {
     };
 
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollViewContainer}>
             <Text style={styles.heading}>Set Monthly Budget for {month}</Text>
             <TextInput
                 style={styles.textInput}
@@ -57,7 +57,7 @@ const Budget = () => {
             <Text>Total Budget: ${monthlyBudget}</Text>
             <Text>Total Spent: ${totalSpent}</Text>
             <Text>Remaining: ${monthlyBudget - totalSpent}</Text>
-        </View>
+        </ScrollView>
     );
 };
 

@@ -8,6 +8,11 @@ export default StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    scrollViewContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 20,
+    },
     heading: {
         fontSize: 24,
         fontWeight: 'bold',

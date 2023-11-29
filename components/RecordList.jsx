@@ -7,7 +7,7 @@ const RecordList = ({ records }) => {
         <View>
             {records.map((record, index) => (
                 <Text key={index}>
-                    {record.date} - {record.category}: ${record.amount}
+                    {record.date} - {record.category}: ${record.amount} - {record.description}
                 </Text>
             ))}
         </View>

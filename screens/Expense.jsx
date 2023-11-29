@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button } from 'react-native';
+import { ScrollView, Text, TextInput, Button } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useFinancialData } from '../contexts/FinancialDataContext';
 import styles from '../styles/styles';
@@ -76,7 +76,7 @@ const Expense = () => {
     };
 
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollViewContainer}>
             <Text style={styles.heading}>Reset Expense</Text>
             <Button title="Reset Data" onPress={resetData} />
             <Text style={styles.heading}>Add Expense</Text>
@@ -103,7 +103,7 @@ const Expense = () => {
             {state.expenses && (
             <RecordList records={state.expenses.slice().sort((a, b) => new Date(b.date) - new Date(a.date))} />
         )}
-        </View>
+        </ScrollView>
     );
 };
 

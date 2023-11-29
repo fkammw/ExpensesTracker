@@ -1,6 +1,6 @@
 // Income.jsx
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button } from 'react-native';
+import { ScrollView, Text, TextInput, Button } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useFinancialData } from '../contexts/FinancialDataContext';
 import styles from '../styles/styles';
@@ -64,7 +64,7 @@ const Income = () => {
     };
 
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollViewContainer}>
             <Text style={styles.heading}>Add Income</Text>
             <TextInput style={styles.textInput} placeholder="Date (YYYY-MM-DD)" value={date} onChangeText={setDate} />
             <TextInput style={styles.textInput} placeholder="Amount" keyboardType="numeric" value={amount} onChangeText={setAmount} />
@@ -84,7 +84,7 @@ const Income = () => {
             {state.incomes && (
             <RecordList records={state.incomes.slice().sort((a, b) => new Date(b.date) - new Date(a.date))} />
         )}
-        </View>
+        </ScrollView>
     );
 };
 

@@ -1,14 +1,13 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { Text, Button, ScrollView} from 'react-native';
 import { PieChart } from 'react-native-chart-kit';
 import { useFinancialData } from '../contexts/FinancialDataContext';
 import styles from '../styles/styles';
 import RecordList from '../components/RecordList';
-import { ScrollView } from 'react-native-gesture-handler';
 
 
 const Home = () => {
-    const { state } = useFinancialData();
+    const { state, loadTestData } = useFinancialData();
 
     // Combine and sort expenses and incomes
     const combinedRecords = [...state.expenses, ...state.incomes]
@@ -16,7 +15,6 @@ const Home = () => {
 
     // Process the data to get the chart format
     const processChartData = (data, colorMapping) => {
-        // This is a basic example, you can enhance the logic as per your requirements
         const categories = [...new Set(data.map(item => item.category))];
         return categories.map(category => {
             const total = data.filter(item => item.category === category)
@@ -24,7 +22,7 @@ const Home = () => {
             return {
                 name: category,
                 amount: total,
-                color: colorMapping[category] || '#000000', // You can map categories to specific colors
+                color: colorMapping[category] || '#000000',
                 legendFontColor: '#7F7F7F',
                 legendFontSize: 15
             };
@@ -35,7 +33,8 @@ const Home = () => {
     const incomeChartData = processChartData(state.incomes, incomeColors);
 
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+            <Button title="Load Test Data" onPress={loadTestData} />
             <Text style={styles.heading}>Expense Overview</Text>
             <PieChart
                 data={expenseChartData}
@@ -58,7 +57,7 @@ const Home = () => {
             />
             <Text style={styles.heading}>Records</Text>
             <RecordList records={combinedRecords} />
-        </View>
+        </ScrollView>
     );
 };
 
