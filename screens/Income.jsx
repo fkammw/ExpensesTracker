@@ -80,7 +80,7 @@ const Income = () => {
             </Picker>
             <TextInput style={styles.textInput} placeholder="Description" value={description} onChangeText={setDescription} />
             <Button title="Add" onPress={submitIncome} disabled={isSubmitting} />
-            <Text style={styles.heading}>Incomes:</Text>
+            <Text style={styles.heading}>Income Record</Text>
             {state.incomes && (
             <RecordList records={state.incomes.slice().sort((a, b) => new Date(b.date) - new Date(a.date))} />
         )}

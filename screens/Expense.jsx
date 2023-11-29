@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ScrollView, Text, TextInput, Button } from 'react-native';
+import DateTimePicker from 'react-datetime-picker'
 import { Picker } from '@react-native-picker/picker';
 import { useFinancialData } from '../contexts/FinancialDataContext';
 import styles from '../styles/styles';
@@ -18,18 +19,7 @@ const Expense = () => {
     const [date, setDate] = useState(() => new Date().toISOString().split('T')[0]); // Current date in YYYY-MM-DD format
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Function to reset data
-    const resetData = async () => {
-        try {
-            await AsyncStorage.clear(); // Clear AsyncStorage
-            // Dispatch actions to reset state
-            dispatch({ type: 'SET_EXPENSES', payload: [] });
-            dispatch({ type: 'SET_INCOMES', payload: [] });
-            alert('Data has been reset.');
-        } catch (error) {
-            alert('Failed to reset data: ' + error.message);
-        }
-    };
+
 
     const submitExpense = async () => {
         if (!date || !amount || !category || !description) {
@@ -77,8 +67,6 @@ const Expense = () => {
 
     return (
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-            <Text style={styles.heading}>Reset Expense</Text>
-            <Button title="Reset Data" onPress={resetData} />
             <Text style={styles.heading}>Add Expense</Text>
             <TextInput style={styles.textInput} placeholder="Date (YYYY-MM-DD)" value={date} onChangeText={setDate} />
             <TextInput style={styles.textInput} placeholder="Amount" keyboardType="numeric" value={amount} onChangeText={setAmount} />
@@ -86,7 +74,8 @@ const Expense = () => {
             <Picker
                 selectedValue={category}
                 onValueChange={(itemValue, itemIndex) => setCategory(itemValue)}
-                style={{ height: 50, width: 200 }}
+                style={{ height: 50, width: 200, backgroundColor: '#ccc', fontColor: '#000'}}
+                itemStyle={{ color: 'black' }}
             >
                 <Picker.Item label="Dining" value="Dining" />
                 <Picker.Item label="Fashion" value="Fashion" />
@@ -99,7 +88,7 @@ const Expense = () => {
 
             <TextInput style={styles.textInput} placeholder="Description" value={description} onChangeText={setDescription} />
             <Button title="Add" onPress={submitExpense} disabled={isSubmitting} />
-            <Text style={styles.heading}>Expenses:</Text>
+            <Text style={styles.heading}>Expenses Record</Text>
             {state.expenses && (
             <RecordList records={state.expenses.slice().sort((a, b) => new Date(b.date) - new Date(a.date))} />
         )}

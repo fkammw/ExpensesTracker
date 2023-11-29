@@ -45,7 +45,31 @@ const Home = () => {
             };
         });
     };
-
+    const renderChartOrMessage = (data, chartData, title) => {
+        if (data.length === 0) {
+            return (
+                <View>
+                    <Text style={styles.heading}>{title}</Text>
+                    <Text>No data available. Add data in the Expense or Income tabs, or load test data.</Text>
+                </View>
+            );
+        } else {
+            return (
+                <View>
+                    <Text style={styles.heading}>{title}</Text>
+                    <PieChart
+                        data={chartData}
+                        width={300}
+                        height={200}
+                        chartConfig={chartConfig}
+                        accessor="amount"
+                        backgroundColor="transparent"
+                        paddingLeft="15"
+                    />
+                </View>
+            );
+        }
+    };
     const expenseChartData = processChartData(state.expenses, expenseColors);
     const incomeChartData = processChartData(state.incomes, incomeColors);
 

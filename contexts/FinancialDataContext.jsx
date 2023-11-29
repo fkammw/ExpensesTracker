@@ -84,9 +84,23 @@ export const FinancialDataProvider = ({ children }) => {
       console.error('Failed to load test data', error);
     }
   }, []);
+  
+  // Function to reset data
+  const resetData = async () => {
+    try {
+        await AsyncStorage.clear(); // Clear AsyncStorage
+        // Dispatch actions to reset state
+        dispatch({ type: 'SET_EXPENSES', payload: [] });
+        dispatch({ type: 'SET_INCOMES', payload: [] });
+        alert('Data has been reset.');
+    } catch (error) {
+        alert('Failed to reset data: ' + error.message);
+    }
+  };
+
 
   return (
-    <FinancialDataContext.Provider value={{ state, dispatch, loadTestData }}>
+    <FinancialDataContext.Provider value={{ state, dispatch, loadTestData, resetData }}>
       {children}
     </FinancialDataContext.Provider>
   );
