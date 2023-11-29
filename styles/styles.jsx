@@ -35,4 +35,15 @@ export default StyleSheet.create({
         color: '#ffffff',
         textAlign: 'center',
     },
+    monthSection: {
+        fontSize: 20,
+        marginTop: 20, // Or any fixed margin you prefer
+        alignSelf: 'flex-start', // Align to the start of the flex container
+      },
+    monthLabel: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginTop: 20, // Or any fixed margin you prefer
+    alignSelf: 'flex-start', // Align to the start of the flex container
+    },
 });

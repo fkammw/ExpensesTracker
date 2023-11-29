@@ -52,7 +52,6 @@ const Budget = () => {
                 keyboardType="numeric"
             />
             <Button title="Save Monthly Budget" onPress={saveBudget} disabled={isSubmitting} />
-            
             <Text style={styles.heading}>Monthly Budget Overview</Text>
             <Text>Total Budget: ${monthlyBudget}</Text>
             <Text>Total Spent: ${totalSpent}</Text>
