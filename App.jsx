@@ -23,6 +23,7 @@ export default function App() {
     <NavigationContainer>
     <Tab.Navigator
       initialRouteName="Home"
+      tabBarOptions={{activeBackgroundColor:'#e5dff5',inactiveBackgroundColor:'#e5dff5'}}
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
@@ -42,15 +43,16 @@ export default function App() {
             <Foundation name={iconName} size={size} color={color} /> :
             <AntDesign name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '#4343D8',
-        tabBarInactiveTintColor: '#9B9BF7',
-        tabBarStyle: [{ display: 'flex' }, null]
+        tabBarActiveTintColor: 'blue',
+        tabBarInactiveTintColor: '#1b8aca',
+        tabBarStyle: [{ display: 'flex' }, null],
+        
       })}
-    >
-      <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Income" component={Income} />
-      <Tab.Screen name="Expense" component={Expense} />
-      <Tab.Screen name="Budget" component={Budget} />
+    > 
+      <Tab.Screen name="Home" component={Home} options={{headerStyle:{backgroundColor:'blue'},headerTintColor:'#fff'}}/>
+      <Tab.Screen name="Income" component={Income} options={{headerStyle:{backgroundColor:'blue'},headerTintColor:'#fff'}}/>
+      <Tab.Screen name="Expense" component={Expense} options={{headerStyle:{backgroundColor:'blue'},headerTintColor:'#fff'}}/>
+      <Tab.Screen name="Budget" component={Budget} options={{headerStyle:{backgroundColor:'blue'},headerTintColor:'#fff'}}/>
     </Tab.Navigator>
 
     </NavigationContainer>

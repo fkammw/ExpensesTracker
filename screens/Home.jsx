@@ -98,7 +98,7 @@ const Home = () => {
 
     return (
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-            <Button title="Load Test Data" onPress={loadTestData} />
+            <Button title="Load Test Data" onPress={loadTestData}/>
             <SelectList
                 data={monthOptions}
                 setSelected={setSelectedMonth}
@@ -113,8 +113,11 @@ const Home = () => {
                 accessor="amount"
                 backgroundColor="transparent"
                 paddingLeft="15"
+                style={styles.vv}
             />
+            
             <Text style={styles.heading}>Income Overview</Text>
+            
             <PieChart
                 data={incomeChartData}
                 width={300}
@@ -123,7 +126,10 @@ const Home = () => {
                 accessor="amount"
                 backgroundColor="transparent"
                 paddingLeft="15"
-            />           
+                style={styles.vv}
+            />  
+               
+                     
             <Text style={styles.heading}>Records</Text>
 
             <RecordList records={filteredRecords} />
