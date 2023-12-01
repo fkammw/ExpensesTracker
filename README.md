@@ -26,8 +26,7 @@ npm install
 ```
 4. Start the application:
 ```bash
-Copy code
-expo start
+npm run start
 ```
 
 ## Usage
