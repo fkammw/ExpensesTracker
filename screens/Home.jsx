@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
-import { Text, Button, ScrollView} from 'react-native';
+import { Text, TouchableOpacity, ScrollView} from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list';
 import { PieChart } from 'react-native-chart-kit';
 import { useFinancialData } from '../contexts/FinancialDataContext';
 import styles from '../styles/styles';
 
 import RecordList from '../components/RecordList';
+import { View } from 'react-native-web';
 
    const monthOptions = [
         {key: 'all', value: 'All Months'},
@@ -23,116 +24,125 @@ import RecordList from '../components/RecordList';
         {key: '12', value: 'December'},
     ];
 
-const Home = () => {
-    const { state, loadTestData } = useFinancialData();
-    const [selectedMonth, setSelectedMonth] = useState('all'); 
-
-    const filterRecordsByMonth = (records, month) => {
-        if (month === 'all') {
-            return records;
-        }
-        const currentYear = new Date().getFullYear();
-        const monthIndex = parseInt(month, 10); // No need to subtract 1 here
+    const Home = () => {
+        const { state, loadTestData, resetData } = useFinancialData();
+        const currentDate = new Date();
+        const currentMonthIndex = String(currentDate.getMonth() + 1); // Adding 1 since getMonth() returns 0-11
+        const [selectedMonth, setSelectedMonth] = useState(currentMonthIndex);
+      
+        const categorizeRecords = (records) => {
+          return records.map(record => ({
+            ...record,
+            type: record.hasOwnProperty('expense') ? 'expense' : 'income'
+          }));
+        };
+      
+        const filterRecordsByMonth = (records, month) => {
+            if (month === 'all') {
+                return records;
+            }
+            const currentYear = new Date().getFullYear();
+            const monthIndex = parseInt(month, 10);
     
-        return records.filter(record => {
-            const recordDate = new Date(record.date);
-            const recordMonth = recordDate.getMonth() + 1; // Adding 1 since getMonth() returns 0-11
-            const recordYear = recordDate.getFullYear();
-            return recordMonth === monthIndex && recordYear === currentYear;
-        });
-    };
-    
-    // Combine and sort expenses and incomes
-    const combinedRecords = [...state.expenses, ...state.incomes]
+            return records.filter(record => {
+                const recordDate = new Date(record.date);
+                const recordMonth = recordDate.getMonth() + 1;
+                const recordYear = recordDate.getFullYear();
+                return recordMonth === monthIndex && recordYear === currentYear;
+            });
+        };
+      
+        const sortedRecords = [...state.expenses, ...state.incomes]
         .sort((a, b) => new Date(b.date) - new Date(a.date)); // Sorting by date in descending order
 
-    // Process the data to get the chart format
-    const processChartData = (data, colorMapping) => {
-        const categories = [...new Set(data.map(item => item.category))];
-        return categories.map(category => {
-            const total = data.filter(item => item.category === category)
-                              .reduce((acc, item) => acc + item.amount, 0);
-            return {
-                name: category,
-                amount: total,
-                color: colorMapping[category] || '#000000',
-                legendFontColor: '#7F7F7F',
-                legendFontSize: 15
-            };
-        });
-    };
-    const renderChartOrMessage = (data, chartData, title) => {
-        if (data.length === 0) {
-            return (
-                <View>
-                    <Text style={styles.heading}>{title}</Text>
-                    <Text>No data available. Add data in the Expense or Income tabs, or load test data.</Text>
-                </View>
-            );
-        } else {
-            return (
-                <View>
-                    <Text style={styles.heading}>{title}</Text>
-                    <PieChart
-                        data={chartData}
-                        width={300}
-                        height={200}
-                        chartConfig={chartConfig}
-                        accessor="amount"
-                        backgroundColor="transparent"
-                        paddingLeft="15"
-                    />
-                </View>
-            );
-        }
-    };
 
-    const expenseChartData = processChartData(filterRecordsByMonth(state.expenses, selectedMonth), expenseColors);
-    const incomeChartData = processChartData(filterRecordsByMonth(state.incomes, selectedMonth), incomeColors);
-    const filteredRecords = selectedMonth && selectedMonth !== 'all'
-    ? combinedRecords.filter(record => {
-        const recordMonth = new Date(record.date).getMonth() + 1;
-        return recordMonth === parseInt(selectedMonth, 10);
-      })
-    : combinedRecords;
+        // Categorize and combine expenses and incomes
+        const combinedRecords = categorizeRecords([...state.expenses, ...state.incomes])
+          .sort((a, b) => new Date(b.date) - new Date(a.date)); // Sorting by date in descending order
+        console.log("Combined Records: ", combinedRecords);
+
+        const processChartData = (data, colorMapping) => {
+          const categories = [...new Set(data.map(item => item.category))];
+          return categories.map(category => {
+            const total = data.filter(item => item.category === category)
+              .reduce((acc, item) => acc + item.amount, 0);
+            return {
+              name: category,
+              amount: total,
+              color: colorMapping[category] || '#000000',
+              legendFontColor: '#7F7F7F',
+              legendFontSize: 15
+            };
+          });
+        };
+      
+        const displaySelectedMonth = () => {
+          const monthName = monthOptions.find(option => option.key === selectedMonth)?.value || 'All Months';
+          return (
+            <Text style={styles.monthHeading}>{monthName}</Text>
+          );
+        };
+      
+        const expenseChartData = processChartData(filterRecordsByMonth(state.expenses, selectedMonth), expenseColors);
+        const incomeChartData = processChartData(filterRecordsByMonth(state.incomes, selectedMonth), incomeColors);
+        const filteredRecords = selectedMonth && selectedMonth !== 'all'
+        ? filterRecordsByMonth(sortedRecords, parseInt(selectedMonth, 10))
+        : sortedRecords;
 
     return (
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-            <Button title="Load Test Data" onPress={loadTestData}/>
+            <View style={styles.buttonContainer}>
+            <TouchableOpacity 
+                style={styles.dataSettingButton} 
+                onPress={loadTestData}>
+                <Text style={styles.buttonText}>Load Test Data</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+                style={styles.dataSettingButton} 
+                onPress={resetData}>
+                <Text style={styles.buttonText}>Reset Data</Text>
+            </TouchableOpacity>
+            </View>
             <SelectList
                 data={monthOptions}
                 setSelected={setSelectedMonth}
                 placeholder="Select a Month"
-                boxStyles={styles.selectBox}/>
-            <Text style={styles.heading}>Expense Overview</Text>
-            <PieChart
-                data={expenseChartData}
-                width={300}
-                height={200}
-                chartConfig={chartConfig}
-                accessor="amount"
-                backgroundColor="transparent"
-                paddingLeft="15"
-                style={styles.vv}
-            />
+                boxStyles={styles.selectBox}
+                dropdownStyles={styles.selectBox}
+                dropdownTextStyles={styles.inputBox}
+                inputStyles={styles.inputBox}/>
+        {displaySelectedMonth()}
+            <View style={styles.overviewContainer}>
+            <Text style={styles.h1}>Expense Overview</Text>
+                <PieChart
+                    data={expenseChartData}
+                    width={350}
+                    height={200}
+                    chartConfig={chartConfig}
+                    accessor="amount"
+                    backgroundColor="white"
+                    paddingLeft="5"
+                    style={styles.chartArea}
+                />
+            </View>
             
-            <Text style={styles.heading}>Income Overview</Text>
-            
-            <PieChart
-                data={incomeChartData}
-                width={300}
-                height={200}
-                chartConfig={chartConfig}
-                accessor="amount"
-                backgroundColor="transparent"
-                paddingLeft="15"
-                style={styles.vv}
-            />  
-               
-                     
-            <Text style={styles.heading}>Records</Text>
-
-            <RecordList records={filteredRecords} />
+            <View style={styles.overviewContainer}>
+                <Text style={styles.h1}>Income Overview</Text>
+                <PieChart
+                    data={incomeChartData}
+                    width={350}
+                    height={200}
+                    chartConfig={chartConfig}
+                    accessor="amount"
+                    backgroundColor="white"
+                    paddingLeft="5"
+                    style={styles.chartArea}
+                />
+                </View>
+            <View style={styles.recordContainer}>
+                <Text style={styles.h1}>Records</Text>
+                <RecordList records={filteredRecords} />
+            </View>  
         </ScrollView>
     );
 };
@@ -158,7 +168,7 @@ const incomeColors = {
     'Property': '#24BD98',
     'Salary': '#4D88FF',
     'Interest': '#DB50F1',
-    'Others': '#FFFFCC'
+    'Others': '#EAB676'
 };
 
 

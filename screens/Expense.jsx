@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ScrollView, Text, TextInput, Button } from 'react-native';
+import { ScrollView, View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list';
 import { useFinancialData } from '../contexts/FinancialDataContext';
 import styles from '../styles/styles';
@@ -8,6 +8,22 @@ import RecordList from '../components/RecordList';
 
 const category_options = ['Dining', 'Fashion', 'Entertainment', 'Groceries', 'Transportation', 'Utilities', 'Others'];
 
+const monthOptions = [
+    {key: 'all', value: 'All Months'},
+    {key: '1', value: 'January'},
+    {key: '2', value: 'February'},
+    {key: '3', value: 'March'},
+    {key: '4', value: 'April'},
+    {key: '5', value: 'May'},
+    {key: '6', value: 'June'},
+    {key: '7', value: 'July'},
+    {key: '8', value: 'August'},
+    {key: '9', value: 'September'},
+    {key: '10', value: 'October'},
+    {key: '11', value: 'November'},
+    {key: '12', value: 'December'},
+];
+
 const Expense = () => {
     const { dispatch, state } = useFinancialData();
     const [amount, setAmount] = useState('');
@@ -15,7 +31,25 @@ const Expense = () => {
     const [description, setDescription] = useState('');
     const today = new Date().toISOString().split('T')[0];
     const [date, setDate] = useState(today);
+    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const filterRecordsByMonth = (records, month) => {
+        if (month === 'all') {
+            return records;
+        }
+        const currentYear = new Date().getFullYear();
+        const monthIndex = parseInt(month, 10);
+
+        return records.filter(record => {
+            const recordDate = new Date(record.date);
+            const recordMonth = recordDate.getMonth() + 1;
+            const recordYear = recordDate.getFullYear();
+            return recordMonth === monthIndex && recordYear === currentYear;
+        });
+    };
+
+    const filteredExpenses = selectedMonth === 'all' ? state.expenses : filterRecordsByMonth(state.expenses, selectedMonth);
 
     const validateAndSetDate = (inputDate) => {
         if (!inputDate) return;
@@ -47,6 +81,7 @@ const Expense = () => {
             amount: parseFloat(amount),
             category,
             description,
+            type: 'expense' // Add this line
         };
         setIsSubmitting(true);
         try {
@@ -76,28 +111,49 @@ const Expense = () => {
         // Reset the form
         setDate(today);
         setAmount('');
-        setCategory(CATEGORY_OPTIONS[0]);
+        setCategory(category_options[0]);
         setDescription('');
     };
+    
 
     return (
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-            <Text style={styles.heading}>Add Expense</Text>
-            <TextInput style={styles.textInput} placeholder="Date (YYYY-MM-DD)" value={date} onChangeText={setDate} onBlur={handleDateBlur} />
-            <TextInput style={styles.textInput} placeholder="Amount" keyboardType="numeric" value={amount} onChangeText={setAmount} />
-            <Text style={styles.label}>Category</Text>
-            <SelectList
-                data={category_options.map((item) => ({ key: item, value: item }))}
-                setSelected={setCategory}
-                placeholder="Select a Category"
-                boxStyles={styles.selectBox}/>
+            <View style={styles.addContainer}>
+                <Text style={styles.h1}>Add Expense</Text>
+                <TextInput style={styles.textInput} placeholder="Date (YYYY-MM-DD)" value={date} onChangeText={setDate} onBlur={handleDateBlur} />
+                
+                <SelectList
+                    data={category_options.map((item) => ({ key: item, value: item }))}
+                    setSelected={setCategory}
+                    placeholder="Select a Category"
+                    boxStyles={styles.categorySelectBox}
+                    dropdownStyles={styles.selectBox}
+                    dropdownTextStyles={styles.inputBox}
+                    inputStyles={styles.inputBox}/>
 
-            <TextInput style={styles.textInput} placeholder="Description" value={description} onChangeText={setDescription} />
-            <Button title="Add" onPress={submitExpense} disabled={isSubmitting} />
-            <Text style={styles.heading}>Expenses Record</Text>
-            {state.expenses && (
-            <RecordList records={state.expenses.slice().sort((a, b) => new Date(b.date) - new Date(a.date))} />
-        )}
+                <TextInput style={styles.textInput} placeholder="Amount ($)" keyboardType="numeric" value={amount} onChangeText={setAmount} />
+                <TextInput style={styles.textInput} placeholder="Description" value={description} onChangeText={setDescription} />
+                <TouchableOpacity style={styles.button} onPress={submitExpense} disabled={isSubmitting}>
+                    <Text style={styles.buttonText}>Add</Text>
+                </TouchableOpacity>
+            </View>
+            <View style={styles.recordContainer}>
+                <Text style={styles.h1}>View Expense</Text>
+                <Text style={styles.monthHeading}>{monthOptions.find(option => option.key === selectedMonth.toString())?.value || 'All Months'}</Text>
+                <SelectList
+                    data={monthOptions}
+                    setSelected={setSelectedMonth}
+                    placeholder="Select a Month"
+                    boxStyles={styles.selectBox}
+                    dropdownStyles={styles.selectBox}
+                    dropdownTextStyles={styles.inputBox}
+                    inputStyles={styles.inputBox}/>
+
+
+                {state.expenses && (
+                <RecordList records={filteredExpenses.sort((a, b) => new Date(b.date) - new Date(a.date))} />
+            )}
+            </View>
         </ScrollView>
     );
 };

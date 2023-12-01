@@ -103,7 +103,8 @@ export const testData = {
 
       // December Expenses
       { date: '2023-12-03', category: 'Dining', description: 'Starbucks', amount: 15.00 },
-    ],
+    ].map(e => ({ ...e, type: 'expense' })),
+
     incomes: [
       // January Income
       { date: '2023-01-05', category: 'Salary', description: 'Monthly Salary from Winners', amount: 2305.00 },
@@ -141,6 +142,18 @@ export const testData = {
       { date: '2023-06-17', category: 'Property', description: 'Parking Space Rent', amount: 300.00 },
       { date: '2023-06-23', category: 'Others', description: 'Online Survey Rewards', amount: 75.00 },
 
+      // July Income
+      { date: '2023-07-04', category: 'Salary', description: 'Monthly Salary from Acme Corp', amount: 3200.00 },
+      { date: '2023-07-10', category: 'Interest', description: 'Monthly Investment Dividend', amount: 60.00 },
+      { date: '2023-07-16', category: 'Property', description: 'Apartment Rental Income', amount: 1500.00 },
+      { date: '2023-07-22', category: 'Others', description: 'E-commerce Sales', amount: 480.00 },
+
+      // August Income
+      { date: '2023-08-03', category: 'Salary', description: 'Monthly Salary from Globex Corporation', amount: 2850.00 },
+      { date: '2023-08-11', category: 'Interest', description: 'Bond Interest Payment', amount: 45.00 },
+      { date: '2023-08-19', category: 'Property', description: 'Commercial Property Lease', amount: 2200.00 },
+      { date: '2023-08-27', category: 'Others', description: 'Consulting Services', amount: 600.00 },
+      
       // September Income
       { date: '2023-09-05', category: 'Salary', description: 'Monthly Salary from Shopify', amount: 3100.00 },
       { date: '2023-09-12', category: 'Interest', description: 'Savings Account Interest', amount: 32.00 },
@@ -161,6 +174,12 @@ export const testData = {
 
       // December Income
       { date: '2023-12-02', category: 'Salary', description: 'Monthly Salary from Manulife', amount: 2795.00 },
-    ],
+    ].map(i => ({ ...i, type: 'income' })),
+    
+    budgets: {
+      '2023-08': 300, // Budget for August
+      '2023-09': 700, // Budget for September
+      '2023-10': 1000, // Budget for October
+  },
 };
 

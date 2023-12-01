@@ -1,7 +1,6 @@
-import React, { createContext, useReducer, useContext } from 'react';
+import React, { useContext } from 'react';
 import { FinancialDataProvider } from './contexts/FinancialDataContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { StatusBar } from 'expo-status-bar'; // Remove if not used
+import { StyleSheet } from 'react-native';
 
 import { Foundation } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
@@ -49,10 +48,10 @@ export default function App() {
         
       })}
     > 
-      <Tab.Screen name="Home" component={Home} options={{headerStyle:{backgroundColor:'blue'},headerTintColor:'#fff'}}/>
-      <Tab.Screen name="Income" component={Income} options={{headerStyle:{backgroundColor:'blue'},headerTintColor:'#fff'}}/>
-      <Tab.Screen name="Expense" component={Expense} options={{headerStyle:{backgroundColor:'blue'},headerTintColor:'#fff'}}/>
-      <Tab.Screen name="Budget" component={Budget} options={{headerStyle:{backgroundColor:'blue'},headerTintColor:'#fff'}}/>
+      <Tab.Screen name="Home" component={Home} options={{headerStyle:{backgroundColor:'navy'},headerTintColor:'#fff', headerTitleAlign:'center',headerTitleStyle: { fontSize: 28, fontWeight: 'bold'}}}/>
+      <Tab.Screen name="Income" component={Income} options={{headerStyle:{backgroundColor:'navy'},headerTintColor:'#fff', headerTitleAlign:'center',headerTitleStyle: { fontSize: 28, fontWeight: 'bold'}}}/>
+      <Tab.Screen name="Expense" component={Expense} options={{headerStyle:{backgroundColor:'navy'},headerTintColor:'#fff', headerTitleAlign:'center',headerTitleStyle: { fontSize: 28, fontWeight: 'bold'}}}/>
+      <Tab.Screen name="Budget" component={Budget} options={{headerStyle:{backgroundColor:'navy'},headerTintColor:'#fff', headerTitleAlign:'center',headerTitleStyle: { fontSize: 28, fontWeight: 'bold'}}}/>
     </Tab.Navigator>
 
     </NavigationContainer>
