@@ -102,7 +102,10 @@ export const testData = {
       { date: '2023-11-24', category: 'Others', description: 'Electronics Repair', amount: 80.00 },
 
       // December Expenses
+      { date: '2023-12-02', category: 'Groceries', description: 'Save on Food', amount: 55.00 },
+      { date: '2023-12-02', category: 'Utilities', description: 'Electricity Bill', amount: 75.00 },
       { date: '2023-12-03', category: 'Dining', description: 'Starbucks', amount: 15.00 },
+      { date: '2023-12-03', category: 'Transportation', description: 'Train Ticket', amount: 55.00 },
     ].map(e => ({ ...e, type: 'expense' })),
 
     incomes: [
@@ -173,7 +176,10 @@ export const testData = {
       { date: '2023-11-25', category: 'Others', description: 'Art Sale Earnings', amount: 350.00 },
 
       // December Income
-      { date: '2023-12-02', category: 'Salary', description: 'Monthly Salary from Manulife', amount: 2795.00 },
+      { date: '2023-12-02', category: 'Property', description: 'Cottage Rental Income', amount: 1200.00 },
+      { date: '2023-12-02', category: 'Others', description: 'Youtube Adsense', amount: 45.00 },
+      { date: '2023-12-03', category: 'Interest', description: 'WealthSimple Bonus', amount: 12.00 },
+      { date: '2023-12-03', category: 'Salary', description: 'Monthly Salary from Manulife', amount: 1095.00 },
     ].map(i => ({ ...i, type: 'income' })),
     
     budgets: {
