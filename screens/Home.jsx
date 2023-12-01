@@ -4,9 +4,13 @@ import { SelectList } from 'react-native-dropdown-select-list';
 import { PieChart } from 'react-native-chart-kit';
 import { useFinancialData } from '../contexts/FinancialDataContext';
 import styles from '../styles/styles';
-
+import { Dimensions } from 'react-native';
 import RecordList from '../components/RecordList';
-import { View } from 'react-native-web';
+import { View } from 'react-native';
+
+// constants for setting the width of the pie charts
+const screenWidth = Dimensions.get('window').width;
+const pieChartWidth = screenWidth * 0.85;
 
    const monthOptions = [
         {key: 'all', value: 'All Months'},
@@ -59,7 +63,6 @@ import { View } from 'react-native-web';
         // Categorize and combine expenses and incomes
         const combinedRecords = categorizeRecords([...state.expenses, ...state.incomes])
           .sort((a, b) => new Date(b.date) - new Date(a.date)); // Sorting by date in descending order
-        console.log("Combined Records: ", combinedRecords);
 
         const processChartData = (data, colorMapping) => {
           const categories = [...new Set(data.map(item => item.category))];
@@ -116,7 +119,7 @@ import { View } from 'react-native-web';
             <Text style={styles.h1}>Expense Overview</Text>
                 <PieChart
                     data={expenseChartData}
-                    width={350}
+                    width={pieChartWidth}
                     height={200}
                     chartConfig={chartConfig}
                     accessor="amount"
@@ -130,7 +133,7 @@ import { View } from 'react-native-web';
                 <Text style={styles.h1}>Income Overview</Text>
                 <PieChart
                     data={incomeChartData}
-                    width={350}
+                    width={pieChartWidth}
                     height={200}
                     chartConfig={chartConfig}
                     accessor="amount"
