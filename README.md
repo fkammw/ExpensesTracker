@@ -17,6 +17,9 @@ This React Native app is designed to help users track their financial activities
 - Data Filtering: View financial records filtered by months.
 - Persistent Storage: Data is saved locally on the device using AsyncStorage.
 
+## Demonstration
+
+
 ## Installation
 1. Clone the repository.
 2. Navigate to the project directory.
